@@ -1,0 +1,36 @@
+<!--
+EECS 468 Assignment 1
+
+Author: Cody Duong
+Other Sources:
+- https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML
+Creation Date: August 23rd, 2023
+
+Hello World! Examples using Javascript and HTML
+
+Outputs: 2 button page
+-->
+
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Hello World!</title>
+</head>
+
+<body>
+  <button onclick="test1()">Test 1 for Hello World!</button>
+  <p id="display"></p>
+  <button onclick="test2()">Test 2 for Hello World!</button>
+  <script>
+    function test1() {
+      alert("Hello World!");
+    }
+    function test2() {
+      document.getElementById('display').innerHTML = `Hello<br><br/>World!`
+    }
+  </script>
+</body>
+
+</html>

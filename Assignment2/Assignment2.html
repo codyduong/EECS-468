@@ -1,0 +1,146 @@
+<!--
+EECS 468 Assignment 2
+
+Author: Cody Duong
+Other Sources:
+- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/pre
+- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_objects/Function/bind
+- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input
+- https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener
+Creation Date: Sept 11, 2023
+
+Outputs: Browser window with labelled sections containing exercise 2.1, 2.2, 2.3
+-->
+
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>EECS 468 | Assignment 2</title>
+</head>
+
+<body>
+  <h1>EECS 468 | Assignment 2</h1>
+  <h2>Exercise 2.1</h2>
+  <p id="exercise2.1"></p>
+  <h2>Exercise 2.2</h2>
+  <p id="exercise2.2"></p>
+  <h3>Exercise 2.3</h3>
+  <label for="exercise2.3-x">X size</label>
+  <input id="exercise2.3-x" type="number" min="1" value="8" disabled />
+  <label for="exercise2.3-y">Y size</label>
+  <input id="exercise2.3-y" type="number" min="1" value="14" disabled />
+  <!-- Either use the input value or binded value -->
+  <label for="exercise2.3-checkbox">Use binded value</label>
+  <input id="exercise2.3-checkbox" type="checkbox" checked />
+
+  <button onclick="makeGrid()">Make grid</button>
+  <pre id="exercise2.3"></pre>
+  <script>
+    // exercise 2.1
+    console.log('Exercise 2.1 - Looping a triangle')
+    let toPrint = 'x'
+    // loop 10 times
+    for (i=10; i>0; i--) {
+      // output to console
+      console.log(toPrint)
+
+      // add to the existing paragraph
+      document.getElementById('exercise2.1').innerHTML += `${toPrint}<br>`;
+      toPrint += 'x'
+    }
+
+    // exercise 2.2
+    console.log('Exercise 2.2 - FizzBuzz')
+    // loop 100 times
+    for (i=0; i<=100; i++) {
+      // set to integer if not 
+      toPrint = i;
+
+      if (i % 4 == 0 || i % 7 == 0) {
+        // if divisible by both set it to both
+        toPrint = 'Divisible by both 4 and 7'
+        if (!(i % 4 == 0)) {
+          // if not divisible by 4, then must only be divisible by 7
+          toPrint = 'Divisible by 7'
+        }
+        if (!(i % 7 == 0)) {
+          // if not divisible by 7, then must only be divisible by 4
+          toPrint = 'Divisible by 4'
+        }
+      }
+
+      // output to console
+      console.log(toPrint)
+      // add to the existing paragraph
+      document.getElementById('exercise2.2').innerHTML += `${toPrint}<br>`;
+    }
+
+    // make sure this matches the initial checkbox state 'exercise2.3-checkbox'
+    let useBinding = true;
+
+    this.size = {
+      x: 8,
+      y: 14
+    }
+
+    // exercise 2.3
+    function makeGrid() {
+      console.log('Exercise 2.3 - n-by-n Grid')
+
+      // use input
+      let x = Number(document.getElementById('exercise2.3-x').value);
+      let y = Number(document.getElementById('exercise2.3-y').value);
+      if (useBinding) {
+        // if using binding use that instead
+        x = this.size.x
+        y = this.size.y
+      }
+      console.log(`x: ${x}, y: ${y}`)
+
+      let rows = [];
+      // create columns
+      for (j=y; j>0; j--) {
+        let row = "";
+        if (j % 2 == 0) {
+          // if we are an even row, start with a " " (space) to match requirements
+          row = " ";
+        }
+        // create row
+        for (i=x; i>0; i--) {
+          row += "* ";
+        }
+        rows.push(row);
+      }
+      // output to console
+      rows.forEach((row) => {
+        console.log(row);
+      })
+      // add to the existing pre
+      document.getElementById('exercise2.3').innerHTML = rows.join('<br>');
+    }
+  
+    // exercise 2.3 control binding
+    function changeBinding(e) {
+      useBinding = e.target.checked
+      if (useBinding) {
+        // disable input if using binding
+        document.getElementById('exercise2.3-x').disabled = true
+        document.getElementById('exercise2.3-y').disabled = true
+      } else {
+        // enable input
+        document.getElementById('exercise2.3-x').disabled = false
+        document.getElementById('exercise2.3-y').disabled = false
+      }
+    }
+
+    // add eventListener
+    document.getElementById('exercise2.3-checkbox').addEventListener('change', changeBinding)
+
+    // just print out the initial loaded grid (8x14)
+    makeGrid();
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,148 @@
+<!--
+EECS 468 Assignment 3
+
+Author: Cody Duong
+Other Sources:
+- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes
+- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/instanceof
+- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError
+- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Private_class_fields
+- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/concat
+- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/includes
+- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/toString
+- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/code
+- https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/The_head_metadata_in_HTML#adding_an_author_and_description
+Creation Date: Sept 18, 2023
+
+Outputs: A page demonstrating Group (Set) functionality
+-->
+
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="author" content="Cody Duong" />
+  <title>EECS 468 | Assignment 3</title>
+</head>
+
+<body>
+  <h1>EECS 468 | Assignment 3</h1>
+  <h2>Cody Duong 3050266</h2>
+  <p id="a">a) Contents of group1<br></p>
+  <p id="b">b) Contents of group2<br></p>
+  <p id="c">c) Results of <code>group1.has(5)</code><br></p>
+  <p id="d">d) Results of <code>group2.has(3)</code><br></p>
+  <p id="e">e) Results of <code>group1.union(group2)</code><br></p>
+  <p id="f">f) Results of <code>group1.intersection(group2)</code><br></p>
+  <p id="g">g) Results of <code>group1.difference(group2)</code><br></p>
+  <p id="h">h) Results of <code>group1.delete(1)</code><br></p>
+  <p id="i">i) Results of <code>group2.delete(1)</code><br></p>
+  <script>
+    class Group {
+      // instantiate with an empty set
+      constructor() {
+        // use an array to store items
+        this.set = [];
+      }
+
+      add (item) {
+        if (!this.has(item)) {
+          // only add the item if it isn't already in the set
+          this.set.push(item);
+        }
+
+        // allows for chaining
+        return this;
+      }
+
+      delete (item) {
+        this.set = this.set.filter((i) => i !== item); // remove matching item
+
+        // allows for chaining
+        return this;
+      }
+
+      has (item) {
+        // just use built-in includes from Array
+        return this.set.includes(item);
+      }
+
+      // private method to validate obj is instanceof `Group`
+      #validate (obj) {
+        if (!obj instanceof Group) {
+          throw TypeError("Expected argument group to be instanceof `Group`");
+        }
+      }
+
+      intersection (group) {
+        this.#validate(group);
+
+        // return a new Group instance 
+        const newGroup = new Group();
+
+        // only have the new set consist of the shared items
+        newGroup.set = this.set.filter((item) => group.set.includes(item));
+
+        return newGroup;
+      }
+
+      difference (group) {
+        this.#validate(group);
+
+        // return a new Group instance 
+        const newGroup = new Group();
+
+        // remove the matching items
+        newGroup.set = this.set.filter((item) => !group.set.includes(item));
+
+        return newGroup;
+      }
+
+      union (group) {
+        this.#validate(group);
+
+        // return a new Group instance 
+        const newGroup = new Group();
+        const uniqueSet = [];
+        // create a uniqueSet to remove duplicate elements
+        this.set.concat(group.set).forEach((item) => {
+          if (!uniqueSet.includes(item)) {
+            // only add to uniqueSet if we haven't already added it
+            uniqueSet.push(item);
+          }
+        })
+        newGroup.set = uniqueSet;
+
+        return newGroup;
+      }
+
+      toString () {
+        return `{${this.set.join(', ')}}`;
+      }
+    }
+    
+    // create the two groups
+    let group1 = new Group();
+    let group2 = new Group();
+    group1.add(1);
+    group1.add(2);
+    group1.add(3);
+    group2.add(2);
+    group2.add(3);
+    group2.add(5);
+    group2.add(2);
+    // show results in html
+    document.getElementById('a').innerHTML += group1.toString();
+    document.getElementById('b').innerHTML += group2.toString();
+    document.getElementById('c').innerHTML += group1.has(5);
+    document.getElementById('d').innerHTML += group2.has(3);
+    document.getElementById('e').innerHTML += group1.union(group2).toString();
+    document.getElementById('f').innerHTML += group1.intersection(group2).toString();
+    document.getElementById('g').innerHTML += group1.difference(group2).toString();
+    document.getElementById('h').innerHTML += group1.delete(1).toString();
+    document.getElementById('i').innerHTML += group2.delete(1).toString();
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,97 @@
+<!--
+EECS 468 Assignment 3
+
+Author: Cody Duong
+Other Sources:
+-
+Creation Date: Oct 2, 2023
+- https://developer.mozilla.org/en-US/docs/Web/API/Element/children
+- https://developer.mozilla.org/en-US/docs/Web/API/Element/getElementsByTagName
+- https://developer.mozilla.org/en-US/docs/Web/API/HTMLDivElement
+- https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement
+- https://developer.mozilla.org/en-US/docs/Web/API/Element
+- https://developer.mozilla.org/en-US/docs/Web/API/Element/append
+- https://developer.mozilla.org/en-US/docs/Web/API/Element/insertAdjacentElement
+- https://developer.mozilla.org/en-US/docs/Web/API/Element/attributes
+- https://developer.mozilla.org/en-US/docs/Web/API/NamedNodeMap
+- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/entries
+
+Outputs: Go KU! Page with tab functionality
+-->
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="author" content="Cody Duong" />
+  <title>Duong's Go KU! Page</title>
+</head>
+
+<body>
+  <tab-panel>
+    <div data-tabname="Rock">Rock ...</div>
+    <div data-tabname="Chalk">Rock Chalk ...</div>
+    <div data-tabname="Jayhawk">Rock Chalk Jayhawk ...</div>
+    <div data-tabname="Go KU!">Rock Chalk Jayhawk - Go KU!</div>
+  </tab-panel>
+  <script>
+    // a function that creates a anonymous function for adding to click eventListener
+    function createHandleClick(buttonsWrapper, tabPanel, index) {
+      return ((evt) => {
+        // change all other tabs
+        Array.from(buttonsWrapper.children).forEach((child, i) => {
+          if (index !== i) {
+            // set this tab to blue if it is not currently selected
+            child.style.backgroundColor = "blue";
+            // hide this tab if its not currently selected
+            Array.from(tabPanel.children)[i].style.display = "none";
+          } else {
+            // set this tab to red if selected
+            child.style.backgroundColor = "red";
+            // show this tab if selected
+            Array.from(tabPanel.children)[i].style.display = "";
+          }
+        })
+      })
+    }
+
+    /**
+     * 1. Write a function, asTabs, that takes a DOM node and creates a tabbed interface showing the child elements of that node.
+     * 2. It should insert a list of <button> elements at the top of the node, one for each child element, containing text retrieved from the data-tabname attribute of the child.
+     * 3. All but one of the original children should be hidden (given a display style of none).
+    */
+    function asTabs(tabPanel) {
+      // create somewhere to hold our buttons
+      const buttonsWrapper = document.createElement("div");
+      buttonsWrapper.id = "buttons-wrapper";
+      tabPanel.insertAdjacentElement("beforebegin", buttonsWrapper);
+      buttonsWrapper.style.color = "#fff";
+
+      // iterate over all the data
+      Array.from(tabPanel.children).forEach((child, index) => {
+        // console.log(child)
+        // Add a button based on the data-tabname
+        const button = document.createElement('button');
+        // get the data-tabname attribute out
+        button.innerHTML = child.attributes["data-tabname"].value;
+        // use white text from parent
+        button.style.color = "inherit";
+        buttonsWrapper.appendChild(button);
+
+        // add a click listener to the button to switch selectedTabIndex
+        button.addEventListener("click", createHandleClick(buttonsWrapper, tabPanel, index));
+
+        // by default have 1st tab selected
+        if (index === 0) {
+          button.style.backgroundColor = 'red';
+        } else {
+          button.style.backgroundColor = "blue";
+          // hide content if not the 1st tab
+          Array.from(tabPanel.children)[index].style.display = "none";
+        }
+      })
+    }
+    // create the tabs
+    asTabs(document.getElementsByTagName('tab-panel')[0]);
+  </script>
+</body>

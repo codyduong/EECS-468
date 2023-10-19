@@ -1,0 +1,104 @@
+<!--
+EECS 468 Assignment 5
+
+Author: Cody Duong
+Other Sources:
+- https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/arc
+- https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillText
+- https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/measureText
+- https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/textAlign
+Creation Date: Oct 18, 2023
+-->
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="author" content="Cody Duong" />
+  <title>Pie Charts</title>
+</head>
+
+<body>
+  <canvas id="pie1" width="1000" height="400"></canvas>
+  <script>
+    // function to generate chart
+    function generatePieChart(chartId, results, arc = [200, 200, 150], title) {
+      // get element by id
+      let cx = document.getElementById(chartId).getContext("2d");
+      // set text align to center
+      cx.textAlign = "center";
+      // set color to black
+      cx.fillStyle = "black";
+      // set some arbitrary text padding
+      const padding = 15;
+      // draw the title
+      cx.fillText(title, arc[0], arc[1] - arc[2] - padding);
+      // get the sum
+      let total = results
+        .reduce((sum, { count }) => sum + count, 0);
+      // Start at the top
+      let currentAngle = -0.5 * Math.PI;
+      // Loop through all values
+      for (let result of results) {
+        // Calculate required angle
+        let sliceAngle = (result.count / total) * 2 * Math.PI;
+        // Start path
+        cx.beginPath();
+        // Spread arc arguments
+        cx.arc(...arc,
+          currentAngle, currentAngle + sliceAngle);
+        // Increment the new angle after the sliceAngle
+        currentAngle += sliceAngle;
+        // Start at center
+        cx.lineTo(...arc);
+        // Fill it with desired color
+        cx.fillStyle = result.color;
+        // Call fill
+        cx.fill();
+      }
+      // choose color (black)
+      cx.fillStyle = "black";
+      // reset to top
+      currentAngle = -0.5 * Math.PI;
+      // Loop through and draw text
+      for (let result of results) {
+        // Calculate required angle
+        let sliceAngle = (result.count / total) * 2 * Math.PI;
+        // Generate text at center of slice
+        let middleAngle = currentAngle + 0.5 * sliceAngle;
+        console.log(currentAngle * (180 / Math.PI), middleAngle * (180 / Math.PI), sliceAngle * (180 / Math.PI));
+        // hypotnuse
+        const hypot = Math.sqrt(arc[0] ** 2 + arc[1] ** 2);
+        // offset text from center
+        const centerOffset = arc[2] * 0.75;
+        // get x or y offset
+        const [x, y] = [Math.cos(middleAngle), Math.sin(middleAngle)];
+        // get x or y sign based on angle and flip it
+        const [xsignflip] = [-Math.sign(x)]; //, Math.sign(y)];
+        // position it at middle slice, with maxWidth as radius, be sure to offset with radius
+        cx.fillText(result.text, arc[0] + centerOffset * x, arc[1] + centerOffset * y);
+        // increment angle
+        currentAngle += sliceAngle;
+      }
+    }
+
+    // generate table1
+    generatePieChart("pie1", [
+      { count: 104, text: "Very happy", color: "green" },
+      { count: 63, text: "Happy", color: "lightgreen" },
+      { count: 87, text: "Neutral", color: "lightgray" },
+      { count: 51, text: "Unhappy", color: "orange" },
+      { count: 26, text: "Very Unhappy", color: "red" },
+      { count: 18, text: "No Comment", color: "gray" },
+    ], undefined, "Data Set 1");
+
+    // generate table2
+    generatePieChart("pie1", [
+      { count: 927, text: "Satisfied", color: "green" },
+      { count: 213, text: "Neutral", color: "lightgray" },
+      { count: 463, text: "Unsatisfied", color: "red" },
+      { count: 510, text: "No comment", color: "gray" },
+    ], [600, 200, 150], "Data Set 2");
+
+  </script>
+</body>
